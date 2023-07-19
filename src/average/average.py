@@ -16,7 +16,7 @@ class AverageMicroservice:
             exit(1)
 
         self.stage = os.environ.get('STAGE_NUMBER')
-        self.bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
+        self.bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9093')
         self.input_topic = os.environ.get('INPUT_TOPIC')
         self.output_topic = os.environ.get('OUTPUT_TOPIC')
         self.db_host = os.environ.get('DB_HOST', 'localhost')

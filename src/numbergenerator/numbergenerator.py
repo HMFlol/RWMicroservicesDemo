@@ -18,7 +18,7 @@ class NumberGeneratorMicroservice:
             exit(1)
 
         self.stage = os.environ.get('STAGE_NUMBER')
-        self.bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9092')
+        self.bootstrap_servers = os.environ.get('BOOTSTRAP_SERVERS', 'localhost:9093')
         self.output_topic = os.environ.get('OUTPUT_TOPIC')
         self.message_min = os.environ.get('MESSAGE_MIN', 1)
         self.message_max = os.environ.get('MESSAGE_MAX', 20)
