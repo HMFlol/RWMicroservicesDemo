@@ -57,7 +57,9 @@ services:
       kafka-topics --bootstrap-server kafka2:9093 --list
 
       echo -e 'Creating kafka topics'
-      kafka-topics --bootstrap-server kafka2:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic start  
+      kafka-topics --bootstrap-server kafka2:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic start
+      kafka-topics --bootstrap-server kafka2:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage0
+      kafka-topics --bootstrap-server kafka2:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage1  
       kafka-topics --bootstrap-server kafka2:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage2
       kafka-topics --bootstrap-server kafka2:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage3
       kafka-topics --bootstrap-server kafka2:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage4
