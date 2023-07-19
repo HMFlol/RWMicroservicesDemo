@@ -4,7 +4,7 @@ services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper2
-    hostname: zookeeper
+    hostname: zookeeper2
     restart: unless-stopped
     environment:
       ZOOKEEPER_CLIENT_PORT: 2182
@@ -15,7 +15,7 @@ services:
   kafka:
     image: confluentinc/cp-kafka:latest
     container_name: kafka2
-    hostname: kafka
+    hostname: kafka2
     restart: unless-stopped
     depends_on:
       - zookeeper2
@@ -72,7 +72,7 @@ services:
   postgres:
     image: postgres:latest
     container_name: postgres2
-    hostname: postgres
+    hostname: postgres2
     restart: unless-stopped
     ports:
       - 15433:5433
