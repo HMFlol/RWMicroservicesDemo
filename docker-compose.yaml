@@ -7,10 +7,10 @@ services:
     hostname: zookeeper
     restart: unless-stopped
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2182
+      ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     # ports:
-    #   - 2182:2182
+    #   - 2181:2181
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -23,7 +23,7 @@ services:
     #  - 19092:9093
     environment:
       - KAFKA_BROKER_ID=1
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2182
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
       - KAFKA_ADVERTISED_LISTENERS=INSIDE://:9093
       - KAFKA_LISTENERS=INSIDE://:9093
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT
@@ -42,7 +42,7 @@ services:
     environment:
       - KAFKA_CLUSTERS_0_NAME=local
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9093
-      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2182
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
 
   kafka_init:
     image: confluentinc/cp-kafka:latest
