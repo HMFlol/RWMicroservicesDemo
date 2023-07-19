@@ -29,7 +29,7 @@ class NumberGeneratorMicroservice:
         self.count_min = os.environ.get('COUNT_MIN', 3)
         self.count_max = os.environ.get('COUNT_MAX', 20)
         self.db_host = os.environ.get('DB_HOST', 'localhost')
-        self.db_port = os.environ.get('DB_PORT', '5432')
+        self.db_port = os.environ.get('DB_PORT', '5433')
         self.db_name = os.environ.get('DB_NAME')
         self.db_user = os.environ.get('DB_USER')
         self.db_password = os.environ.get('DB_PASSWORD')
