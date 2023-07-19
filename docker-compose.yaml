@@ -7,10 +7,10 @@ services:
     hostname: zookeeper
     restart: unless-stopped
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_CLIENT_PORT: 2182
       ZOOKEEPER_TICK_TIME: 2000
     # ports:
-    #   - 2181:2181
+    #   - 2182:2182
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -20,12 +20,12 @@ services:
     depends_on:
       - zookeeper
     #ports:
-    #  - 19092:9092
+    #  - 19092:9093
     environment:
       - KAFKA_BROKER_ID=1
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_ADVERTISED_LISTENERS=INSIDE://:9092
-      - KAFKA_LISTENERS=INSIDE://:9092
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2182
+      - KAFKA_ADVERTISED_LISTENERS=INSIDE://:9093
+      - KAFKA_LISTENERS=INSIDE://:9093
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT
       - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
@@ -38,11 +38,11 @@ services:
     depends_on:
       - kafka
     ports:
-      - 18080:8080
+      - 18082:8082
     environment:
       - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
-      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9093
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2182
 
   kafka_init:
     image: confluentinc/cp-kafka:latest
@@ -54,21 +54,21 @@ services:
     command: |
       "
       # blocks until kafka is reachable
-      kafka-topics --bootstrap-server kafka:9092 --list
+      kafka-topics --bootstrap-server kafka:9093 --list
 
       echo -e 'Creating kafka topics'
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --replication-factor 1 --partitions 1 --topic start
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage0
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage1  
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage2
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage3
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage4
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage5
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage6
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --replication-factor 1 --partitions 1 --topic finish
+      kafka-topics --bootstrap-server kafka:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic start
+      kafka-topics --bootstrap-server kafka:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage0
+      kafka-topics --bootstrap-server kafka:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage1  
+      kafka-topics --bootstrap-server kafka:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage2
+      kafka-topics --bootstrap-server kafka:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage3
+      kafka-topics --bootstrap-server kafka:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage4
+      kafka-topics --bootstrap-server kafka:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage5
+      kafka-topics --bootstrap-server kafka:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage6
+      kafka-topics --bootstrap-server kafka:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic finish
 
       echo -e 'Successfully created the following topics:'
-      kafka-topics --bootstrap-server kafka:9092 --list
+      kafka-topics --bootstrap-server kafka:9093 --list
       "
 
   postgres:
@@ -88,7 +88,7 @@ services:
     restart: unless-stopped
     image: sosedoff/pgweb
     ports: 
-      - 18081:8081
+      - 18083:8083
     environment:
       - DATABASE_URL=postgres://flow:uyrT1hM72cecTTu6@postgres:5432/flow_results?sslmode=disable
     depends_on:
@@ -105,7 +105,7 @@ services:
       - postgres
     environment:
       - STAGE_NUMBER=stage0
-      - BOOTSTRAP_SERVERS=kafka:9092
+      - BOOTSTRAP_SERVERS=kafka:9093
       - OUTPUT_TOPIC=start
       - DB_HOST=postgres
       - DB_NAME=flow_results
@@ -124,7 +124,7 @@ services:
     environment:
       - STAGE_NUMBER=stage1
       - OPERATION_TYPE=add
-      - BOOTSTRAP_SERVERS=kafka:9092
+      - BOOTSTRAP_SERVERS=kafka:9093
       - INPUT_TOPIC=start
       - OUTPUT_TOPIC=stage2
       - DB_HOST=postgres
@@ -144,7 +144,7 @@ services:
     environment:
       - STAGE_NUMBER=stage2
       - OPERATION_TYPE=multiply
-      - BOOTSTRAP_SERVERS=kafka:9092
+      - BOOTSTRAP_SERVERS=kafka:9093
       - INPUT_TOPIC=stage2
       - OUTPUT_TOPIC=stage3
       - DB_HOST=postgres
@@ -163,7 +163,7 @@ services:
       - postgres
     environment:
       - STAGE_NUMBER=stage3
-      - BOOTSTRAP_SERVERS=kafka:9092
+      - BOOTSTRAP_SERVERS=kafka:9093
       - INPUT_TOPIC=stage3
       - OUTPUT_TOPIC=stage4
       - DB_HOST=postgres
@@ -182,7 +182,7 @@ services:
       - postgres
     environment:
       - STAGE_NUMBER=stage4
-      - BOOTSTRAP_SERVERS=kafka:9092
+      - BOOTSTRAP_SERVERS=kafka:9093
       - INPUT_TOPIC=stage4
       - OUTPUT_TOPIC=stage5
       - DB_HOST=postgres
@@ -201,7 +201,7 @@ services:
       - postgres
     environment:
       - STAGE_NUMBER=stage5
-      - BOOTSTRAP_SERVERS=kafka:9092
+      - BOOTSTRAP_SERVERS=kafka:9093
       - INPUT_TOPIC=stage5
       - OUTPUT_TOPIC=stage6
       - DB_HOST=postgres
@@ -220,7 +220,7 @@ services:
       - postgres
     environment:
       - STAGE_NUMBER=stage6
-      - BOOTSTRAP_SERVERS=kafka:9092
+      - BOOTSTRAP_SERVERS=kafka:9093
       - INPUT_TOPIC=stage6
       - OUTPUT_TOPIC=finish
       - DB_HOST=postgres
