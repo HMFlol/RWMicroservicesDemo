@@ -3,7 +3,7 @@ version: '3.8'
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper
+    #container_name: zookeeper
     hostname: zookeeper
     restart: unless-stopped
     environment:
@@ -14,7 +14,7 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:latest
-    container_name: kafka
+    #container_name: kafka
     hostname: kafka
     restart: unless-stopped
     depends_on:
@@ -33,7 +33,7 @@ services:
 
   kafka_ui:
     image: provectuslabs/kafka-ui:latest
-    container_name: kafka_ui
+    #container_name: kafka_ui
     restart: unless-stopped
     depends_on:
       - kafka
@@ -46,7 +46,7 @@ services:
 
   kafka_init:
     image: confluentinc/cp-kafka:latest
-    container_name: kafka_init
+    #container_name: kafka_init
     depends_on:
       - zookeeper
       - kafka
@@ -71,7 +71,7 @@ services:
 
   postgres:
     image: postgres:latest
-    container_name: postgres
+    #container_name: postgres
     hostname: postgres
     restart: unless-stopped
     #ports:
@@ -82,7 +82,7 @@ services:
       - POSTGRES_DB=flow_results
 
   postgres_ui:
-    container_name: postgres_ui
+    #container_name: postgres_ui
     restart: unless-stopped
     image: sosedoff/pgweb
     ports: 
@@ -96,7 +96,7 @@ services:
     build:
       context: ./src/numbergenerator
       dockerfile: Dockerfile
-    container_name: flow_stage0
+    #container_name: flow_stage0
     restart: unless-stopped
     depends_on:
       - kafka_init
@@ -114,7 +114,7 @@ services:
     build:
       context: ./src/python_math
       dockerfile: Dockerfile
-    container_name: flow_stage1
+    #container_name: flow_stage1
     restart: unless-stopped
     depends_on:
       - kafka_init
@@ -134,7 +134,7 @@ services:
     build:
       context: ./src/python_math
       dockerfile: Dockerfile
-    container_name: flow_stage2
+    #container_name: flow_stage2
     restart: unless-stopped
     depends_on:
       - kafka_init
@@ -154,7 +154,7 @@ services:
     build:
       context: ./src/lcm
       dockerfile: Dockerfile
-    container_name: flow_stage3
+    #container_name: flow_stage3
     restart: unless-stopped
     depends_on:
       - kafka_init
@@ -173,7 +173,7 @@ services:
     build:
       context: ./src/average
       dockerfile: Dockerfile
-    container_name: flow_stage4
+    #container_name: flow_stage4
     restart: unless-stopped
     depends_on:
       - kafka_init
@@ -192,7 +192,7 @@ services:
     build:
       context: ./src/sin
       dockerfile: Dockerfile
-    container_name: flow_stage5
+    #container_name: flow_stage5
     restart: unless-stopped
     depends_on:
       - kafka_init
@@ -211,7 +211,7 @@ services:
     build:
       context: ./src/squareroot
       dockerfile: Dockerfile
-    container_name: flow_stage6
+    #container_name: flow_stage6
     restart: unless-stopped
     depends_on:
       - kafka_init
