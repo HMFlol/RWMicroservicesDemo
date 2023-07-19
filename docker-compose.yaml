@@ -1,111 +1,109 @@
 version: '3.8'
 
 services:
-  zookeeper2:
+  zookeeper:
     image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper2
-    hostname: zookeeper2
+    container_name: zookeeper
+    hostname: zookeeper
     restart: unless-stopped
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2182
+      ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-    ports:
-      - 2182:2182
+    # ports:
+    #   - 2181:2181
 
-  kafka2:
+  kafka:
     image: confluentinc/cp-kafka:latest
-    container_name: kafka2
-    hostname: kafka2
+    container_name: kafka
+    hostname: kafka
     restart: unless-stopped
     depends_on:
-      - zookeeper2
-    ports:
-      - 19093:9093
+      - zookeeper
+    #ports:
+    #  - 19092:9092
     environment:
       - KAFKA_BROKER_ID=1
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper2:2182
-      - KAFKA_ADVERTISED_LISTENERS=INSIDE://:9093
-      - KAFKA_LISTENERS=INSIDE://:9093
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=INSIDE://:9092
+      - KAFKA_LISTENERS=INSIDE://:9092
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT
       - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
       - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
 
-  kafka_ui2:
+  kafka_ui:
     image: provectuslabs/kafka-ui:latest
-    container_name: kafka_ui2
+    container_name: kafka_ui
     restart: unless-stopped
     depends_on:
-      - kafka2
+      - kafka
     ports:
-      - 18083:8083
+      - 19080:8080
     environment:
       - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka2:9093
-      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper2:2182
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
 
-  kafka_init2:
+  kafka_init:
     image: confluentinc/cp-kafka:latest
-    container_name: kafka_init2
+    container_name: kafka_init
     depends_on:
-      - zookeeper2
-      - kafka2
+      - zookeeper
+      - kafka
     entrypoint: [ '/bin/sh', '-c' ]
     command: |
       "
       # blocks until kafka is reachable
-      kafka-topics --bootstrap-server kafka2:9093 --list
+      kafka-topics --bootstrap-server kafka:9092 --list
 
       echo -e 'Creating kafka topics'
-      kafka-topics --bootstrap-server kafka2:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic start
-      kafka-topics --bootstrap-server kafka2:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage0
-      kafka-topics --bootstrap-server kafka2:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage1  
-      kafka-topics --bootstrap-server kafka2:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage2
-      kafka-topics --bootstrap-server kafka2:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage3
-      kafka-topics --bootstrap-server kafka2:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage4
-      kafka-topics --bootstrap-server kafka2:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage5
-      kafka-topics --bootstrap-server kafka2:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage6
-      kafka-topics --bootstrap-server kafka2:9093 --create --if-not-exists --replication-factor 1 --partitions 1 --topic finish
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --replication-factor 1 --partitions 1 --topic start  
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage2
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage3
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage4
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage5
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --replication-factor 1 --partitions 1 --topic stage6
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --replication-factor 1 --partitions 1 --topic finish
 
       echo -e 'Successfully created the following topics:'
-      kafka-topics --bootstrap-server kafka2:9093 --list
+      kafka-topics --bootstrap-server kafka:9092 --list
       "
 
-  postgres2:
+  postgres:
     image: postgres:latest
-    container_name: postgres2
-    hostname: postgres2
+    container_name: postgres
+    hostname: postgres
     restart: unless-stopped
-    ports:
-      - 15433:5433
+    #ports:
+    #  - 15432:5432
     environment:
       - POSTGRES_USER=flow
       - POSTGRES_PASSWORD=uyrT1hM72cecTTu6
       - POSTGRES_DB=flow_results
 
-  postgres_ui2:
-    container_name: postgres_ui2
+  postgres_ui:
+    container_name: postgres_ui
     restart: unless-stopped
     image: sosedoff/pgweb
     ports: 
-      - 18084:8084
+      - 19081:8081
     environment:
-      - DATABASE_URL=postgres://flow:uyrT1hM72cecTTu6@postgres2:5433/flow_results?sslmode=disable
+      - DATABASE_URL=postgres://flow:uyrT1hM72cecTTu6@postgres:5432/flow_results?sslmode=disable
     depends_on:
-      - postgres2
+      - postgres
 
   stage0:
     build:
       context: ./src/numbergenerator
       dockerfile: Dockerfile
-    container_name: flow_stage0_r
+    container_name: flow_stage0
     restart: unless-stopped
     depends_on:
-      - kafka_init2
-      - postgres2
+      - kafka_init
+      - postgres
     environment:
       - STAGE_NUMBER=stage0
-      - BOOTSTRAP_SERVERS=kafka2:9093
+      - BOOTSTRAP_SERVERS=kafka:9092
       - OUTPUT_TOPIC=start
       - DB_HOST=postgres
       - DB_NAME=flow_results
@@ -116,15 +114,15 @@ services:
     build:
       context: ./src/python_math
       dockerfile: Dockerfile
-    container_name: flow_stage1_r
+    container_name: flow_stage1
     restart: unless-stopped
     depends_on:
-      - kafka_init2
-      - postgres2
+      - kafka_init
+      - postgres
     environment:
       - STAGE_NUMBER=stage1
       - OPERATION_TYPE=add
-      - BOOTSTRAP_SERVERS=kafka2:9093
+      - BOOTSTRAP_SERVERS=kafka:9092
       - INPUT_TOPIC=start
       - OUTPUT_TOPIC=stage2
       - DB_HOST=postgres
@@ -136,15 +134,15 @@ services:
     build:
       context: ./src/python_math
       dockerfile: Dockerfile
-    container_name: flow_stage2_r
+    container_name: flow_stage2
     restart: unless-stopped
     depends_on:
-      - kafka_init2
-      - postgres2
+      - kafka_init
+      - postgres
     environment:
       - STAGE_NUMBER=stage2
       - OPERATION_TYPE=multiply
-      - BOOTSTRAP_SERVERS=kafka2:9093
+      - BOOTSTRAP_SERVERS=kafka:9092
       - INPUT_TOPIC=stage2
       - OUTPUT_TOPIC=stage3
       - DB_HOST=postgres
@@ -156,14 +154,14 @@ services:
     build:
       context: ./src/lcm
       dockerfile: Dockerfile
-    container_name: flow_stage3_r
+    container_name: flow_stage3
     restart: unless-stopped
     depends_on:
-      - kafka_init2
-      - postgres2
+      - kafka_init
+      - postgres
     environment:
       - STAGE_NUMBER=stage3
-      - BOOTSTRAP_SERVERS=kafka2:9093
+      - BOOTSTRAP_SERVERS=kafka:9092
       - INPUT_TOPIC=stage3
       - OUTPUT_TOPIC=stage4
       - DB_HOST=postgres
@@ -175,14 +173,14 @@ services:
     build:
       context: ./src/average
       dockerfile: Dockerfile
-    container_name: flow_stage4_r
+    container_name: flow_stage4
     restart: unless-stopped
     depends_on:
-      - kafka_init2
-      - postgres2
+      - kafka_init
+      - postgres
     environment:
       - STAGE_NUMBER=stage4
-      - BOOTSTRAP_SERVERS=kafka2:9093
+      - BOOTSTRAP_SERVERS=kafka:9092
       - INPUT_TOPIC=stage4
       - OUTPUT_TOPIC=stage5
       - DB_HOST=postgres
@@ -194,14 +192,14 @@ services:
     build:
       context: ./src/sin
       dockerfile: Dockerfile
-    container_name: flow_stage5_r
+    container_name: flow_stage5
     restart: unless-stopped
     depends_on:
-      - kafka_init2
-      - postgres2
+      - kafka_init
+      - postgres
     environment:
       - STAGE_NUMBER=stage5
-      - BOOTSTRAP_SERVERS=kafka2:9093
+      - BOOTSTRAP_SERVERS=kafka:9092
       - INPUT_TOPIC=stage5
       - OUTPUT_TOPIC=stage6
       - DB_HOST=postgres
@@ -213,14 +211,14 @@ services:
     build:
       context: ./src/squareroot
       dockerfile: Dockerfile
-    container_name: flow_stage6_r
+    container_name: flow_stage6
     restart: unless-stopped
     depends_on:
-      - kafka_init2
-      - postgres2
+      - kafka_init
+      - postgres
     environment:
       - STAGE_NUMBER=stage6
-      - BOOTSTRAP_SERVERS=kafka2:9093
+      - BOOTSTRAP_SERVERS=kafka:9092
       - INPUT_TOPIC=stage6
       - OUTPUT_TOPIC=finish
       - DB_HOST=postgres
