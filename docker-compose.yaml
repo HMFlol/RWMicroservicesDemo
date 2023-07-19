@@ -90,7 +90,7 @@ services:
     ports: 
       - 18084:8084
     environment:
-      - DATABASE_URL=postgres://flow:uyrT1hM72cecTTu6@postgres:5433/flow_results?sslmode=disable
+      - DATABASE_URL=postgres://flow:uyrT1hM72cecTTu6@postgres2:5433/flow_results?sslmode=disable
     depends_on:
       - postgres2
 
