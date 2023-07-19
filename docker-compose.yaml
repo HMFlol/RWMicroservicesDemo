@@ -3,7 +3,7 @@ version: '3.8'
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper
+    container_name: zookeeperrw
     hostname: zookeeper
     restart: unless-stopped
     environment:
@@ -14,7 +14,7 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:latest
-    container_name: kafka
+    container_name: kafkarw
     hostname: kafka
     restart: unless-stopped
     depends_on:
@@ -33,7 +33,7 @@ services:
 
   kafka_ui:
     image: provectuslabs/kafka-ui:latest
-    container_name: kafka_ui
+    container_name: kafka_uirw
     restart: unless-stopped
     depends_on:
       - kafka
@@ -46,7 +46,7 @@ services:
 
   kafka_init:
     image: confluentinc/cp-kafka:latest
-    container_name: kafka_init
+    container_name: kafka_initrw
     depends_on:
       - zookeeper
       - kafka
