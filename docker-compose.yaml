@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  zookeeper:
+  zookeeper2:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper2
     hostname: zookeeper2
@@ -12,7 +12,7 @@ services:
     ports:
       - 2182:2182
 
-  kafka:
+  kafka2:
     image: confluentinc/cp-kafka:latest
     container_name: kafka2
     hostname: kafka2
@@ -31,7 +31,7 @@ services:
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
       - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
 
-  kafka_ui:
+  kafka_ui2:
     image: provectuslabs/kafka-ui:latest
     container_name: kafka_ui2
     restart: unless-stopped
@@ -44,7 +44,7 @@ services:
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka2:9093
       - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper2:2182
 
-  kafka_init:
+  kafka_init2:
     image: confluentinc/cp-kafka:latest
     container_name: kafka_init2
     depends_on:
@@ -71,7 +71,7 @@ services:
       kafka-topics --bootstrap-server kafka2:9093 --list
       "
 
-  postgres:
+  postgres2:
     image: postgres:latest
     container_name: postgres2
     hostname: postgres2
@@ -83,7 +83,7 @@ services:
       - POSTGRES_PASSWORD=uyrT1hM72cecTTu6
       - POSTGRES_DB=flow_results
 
-  postgres_ui:
+  postgres_ui2:
     container_name: postgres_ui2
     restart: unless-stopped
     image: sosedoff/pgweb
